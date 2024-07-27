@@ -1,9 +1,10 @@
 """
-This is a echo bot.
+This is an echo bot.
 It echoes any incoming text messages.
 """
 
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command
 
 import bap
 
@@ -12,11 +13,11 @@ AD_PROVIDER_TOKEN = ''
 
 # Initialize bot and dispatcher
 bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)
-dp.setup_middleware(bap.BapMiddleware(AD_PROVIDER_TOKEN))
+dp = Dispatcher()
+dp.update.middleware(bap.BapMiddleware(AD_PROVIDER_TOKEN))
 
 
-@dp.message_handler(commands=['start', 'help'])
+@dp.message(Command('start', 'help'))
 async def send_welcome(message: types.Message):
     """
     This handler will be called when user sends `/start` or `/help` command
@@ -24,7 +25,7 @@ async def send_welcome(message: types.Message):
     await message.reply("Hi!\nI'm EchoBot!\nPowered by aiogram.")
 
 
-@dp.message_handler()
+@dp.message()
 async def echo(message: types.Message):
     # old style:
     # await bot.send_message(message.chat.id, message.text)
@@ -33,4 +34,4 @@ async def echo(message: types.Message):
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    dp.run_polling(dp)

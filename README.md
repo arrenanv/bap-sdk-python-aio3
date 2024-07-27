@@ -9,6 +9,7 @@ This repository holds SDK related to
 ## Requirements
 
 - Python >=3.7
+- aiogram >= 3.2.0
 
 ## Installation
 

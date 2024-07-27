@@ -1,6 +1,7 @@
-from aiogram.dispatcher.handler import CancelHandler
-from aiogram.dispatcher.middlewares import BaseMiddleware
-from aiogram.types import Update
+from typing import Any, Dict, Callable, Awaitable
+
+from aiogram import BaseMiddleware
+from aiogram.types import TelegramObject
 
 from bap import Bap
 
@@ -10,8 +11,13 @@ class BapMiddleware(BaseMiddleware):
         self._bap = Bap(api_key)
         super(BapMiddleware, self).__init__()
 
-    async def on_process_update(self, update: Update, data):
-        needUpdate = await self._bap.handle_update(update.to_python())
+    async def __call__(
+            self,
+            handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+            event: TelegramObject,
+            data: Dict[str, Any]
+    ):
+        needUpdate = await self._bap.handle_update(event.model_dump())
 
         if not needUpdate:
-            raise CancelHandler()
+            return await handler(event, data)
