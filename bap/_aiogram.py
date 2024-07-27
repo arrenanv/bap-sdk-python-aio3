@@ -9,7 +9,6 @@ from bap import Bap
 class BapMiddleware(BaseMiddleware):
     def __init__(self, api_key: str):
         self._bap = Bap(api_key)
-        super(BapMiddleware, self).__init__()
 
     async def __call__(
             self,
