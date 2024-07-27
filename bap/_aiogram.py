@@ -16,7 +16,7 @@ class BapMiddleware(BaseMiddleware):
             event: TelegramObject,
             data: Dict[str, Any]
     ):
-        needUpdate = await self._bap.handle_update(event.model_dump())
+        need_to_handle = await self._bap.handle_update(event.model_dump())
 
-        if not needUpdate:
+        if need_to_handle:
             return await handler(event, data)
