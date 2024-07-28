@@ -35,6 +35,18 @@ class Bap(object):
 
         return True
 
+    @staticmethod
+    def remove_link_preview_options(data: dict, update: dict):
+        if 'message' in update and update['message'] is not None:
+            data['update']['message'] = update['message']
+            if 'link_preview_options' in update['message']:
+                del update['message']['link_preview_options']
+
+        if 'callback_query' in update and update['callback_query'] is not None:
+            data['update']['callback_query'] = update['callback_query']
+            if 'link_preview_options' in update['callback_query']['message']:
+                del update['callback_query']['message']['link_preview_options']
+
     def is_bap_update(self, update: dict) -> bool:
         """Check if callback data has BAP prefix"""
         return (
@@ -54,9 +66,17 @@ class Bap(object):
         data = {
             'api_key': self._api_key,
             'version': self._API_VERSION,
-            'update': update,
+            'update': {
+                'update_id': update['update_id']
+            },
             'method': method,
         }
+
+        # Remove link_preview_options from message
+        # as this field cannot be serialized
+        # and unnecessary for the BAP API
+        self.remove_link_preview_options(data, update)
+
         serialized_data = json.dumps(data, default=self.json_serial)
         self._socket.sendto(serialized_data.encode('utf-8'), self._ADDR)
 
