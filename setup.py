@@ -14,8 +14,8 @@ setup(
         'Programming Language :: Python :: 3.10',
     ],
     extras_require={
-        'aiogram2': [
-            'aiogram>=2.0.0,<3.0.0',
+        'aiogram': [
+            'aiogram>=3.2.0,<4.0.0',
         ],
     },
 )
